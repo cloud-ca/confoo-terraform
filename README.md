@@ -24,17 +24,20 @@ export OS_AUTH_URL=https://auth-east.cloud.ca/v2.0
 ```
 
 3. Set terraform to use a container as remote backend. 
+
 ```bash
 terraform remote config -backend=swift -backend-config="path=private"
 ```
 By default, __backend_container__ variable is set to private. If you would like to use a different container, be sure to change it in the __variables.tf__ file and modify the command above.
 
 4. Retrieve plan to deploy infrastructure
+
 ```bash
 terraform plan
 ```
 
 5. Deploy the infrastructure
+
 ```bash
 terraform apply
 ```
