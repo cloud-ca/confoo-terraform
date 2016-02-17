@@ -8,7 +8,7 @@ This deployment example will deploy :
 * A public IP address will be acquired to load balance the instances in the web tier
 * The __tfstate\.tf__ state file will be stored in [swift](http://docs.openstack.org/developer/swift/) to allow sharing within a team
 
-## First steps
+## Usage
 
 1. Install [Terraform](https://www.terraform.io/intro/getting-started/install.html)
 
