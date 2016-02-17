@@ -10,9 +10,9 @@ This deployment example will deploy :
 
 ## Usage
 
-* Install [Terraform](https://www.terraform.io/intro/getting-started/install.html)
+1. Install [Terraform](https://www.terraform.io/intro/getting-started/install.html)
 
-* Retrive your API keys for your cloud.ca compute and object-storage environments, and export them to environment variables
+2. Retrive your API keys for your cloud.ca compute and object-storage environments, and export them to environment variables
 
 ```bash
 export TF_VAR_api_key=YOUR CS API KEY
@@ -41,7 +41,3 @@ terraform plan
 ```bash
 terraform apply
 ```
-
-* Wait.
-
-* Voilà!
