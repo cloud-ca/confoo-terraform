@@ -10,9 +10,9 @@ This deployment example will deploy :
 
 ## Usage
 
-1. Install [Terraform](https://www.terraform.io/intro/getting-started/install.html)
+* Install [Terraform](https://www.terraform.io/intro/getting-started/install.html)
 
-2. Retrive your API keys for your cloud.ca compute and object-storage environments, and export them to environment variables
+* Retrive your API keys for your cloud.ca compute and object-storage environments, and export them to environment variables
 
 ```bash
 export TF_VAR_api_key=YOUR CS API KEY
@@ -23,21 +23,25 @@ export OS_TENANT_NAME=YOUR SWIFT TENANT NAME
 export OS_AUTH_URL=https://auth-east.cloud.ca/v2.0
 ```
 
-3. Set terraform to use a container as remote backend. 
+* Set terraform to use a container as remote backend. 
 
 ```bash
 terraform remote config -backend=swift -backend-config="path=private"
 ```
 By default, __backend_container__ variable is set to private. If you would like to use a different container, be sure to change it in the __variables.tf__ file and modify the command above.
 
-4. Retrieve plan to deploy infrastructure
+* Retrieve plan to deploy infrastructure
 
 ```bash
 terraform plan
 ```
 
-5. Deploy the infrastructure
+* Deploy the infrastructure
 
 ```bash
 terraform apply
 ```
+
+* Wait.
+
+* Voilà!
