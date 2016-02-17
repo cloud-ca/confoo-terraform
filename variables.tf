@@ -1,13 +1,19 @@
+# Environment setup variables
 variable "api_url" {
     default = "https://compute-east.cloud.ca/client/api"
 }
 variable "api_key" {}
 variable "secret_key" {}
+variable "project" {
+    default = "1e749146-d81b-49e5-8df5-3052868a738c" 
+}
+variable "backend_container" {
+   default="private"
+}
+
+#Resource variables
 variable "zone" {
     default = "QC-1"
-}
-variable "project" {
-    default = "confoo" 
 }
 variable "template" {
    default = "Ubuntu 14.04.2 HVM base (64bit)"

@@ -6,7 +6,7 @@
 resource "terraform_remote_state" "tf_state" {
     backend = "swift"
     config {
-        path = "confoo"
+        path = "${var.backend_container}"
     }
 }
 
