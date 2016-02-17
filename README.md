@@ -1,4 +1,4 @@
-# Deployment example in cloud.ca with Terraform
+# Deployment with Terraform in [cloud.ca](https://cloud.ca)
 This deployment example will deploy :
 
 * A VPC
