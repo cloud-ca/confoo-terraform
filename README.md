@@ -32,7 +32,7 @@ This deployment example will deploy :
 
     By default, __backend_container__ variable is set to private. If you would like to use a different container, be sure to change it in the __variables.tf__ file and modify the command above.
 
-4. Retrieve plan to deploy infrastructure
+4. View plan to deploy infrastructure
 
     ```
     terraform plan
