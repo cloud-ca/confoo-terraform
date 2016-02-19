@@ -44,6 +44,26 @@ resource "cloudstack_network" "data" {
     depends_on = ["cloudstack_vpc.demo"]
 }
 
+# Db
+resource "cloudstack_instance" "db" {
+    name = "db${count.index}"
+    service_offering= "${var.service_offering}"
+    network = "${cloudstack_network.data.id}"
+    template = "${var.template}"
+    zone = "${var.zone}"
+    keypair = "pdube"
+    project = "${var.project}"
+    count = "${var.db_instance_count}"
+}
+
+resource "template_file" "app_init" {
+  count    = "${var.app_instance_count}"
+  template = "${file("app.init")}"
+  vars {
+    instance_name = "app${count.index}"
+  }
+}
+
 # Applications
 resource "cloudstack_instance" "app" {
     name = "app${count.index}"
@@ -52,23 +72,20 @@ resource "cloudstack_instance" "app" {
     template = "${var.template}"
     zone = "${var.zone}"
     project = "${var.project}"
-    count = 3
-}
-
-# MySQL dbs
-resource "cloudstack_instance" "db" {
-    name = "db${count.index}"
-    service_offering= "${var.service_offering}"
-    network = "${cloudstack_network.data.id}"
-    template = "${var.template}"
-    zone = "${var.zone}"
-    project = "${var.project}"
-    count = 2
-    depends_on = ["cloudstack_instance.app"]
+    keypair = "pdube"
+    count = "${var.app_instance_count}"
+    user_data = "${element(template_file.app_init.*.rendered, count.index)}"
+    depends_on = ["cloudstack_instance.db"]
 }
 
 # Acquire IP for load balancing web app
 resource "cloudstack_ipaddress" "lb-ip" {
+    vpc = "${cloudstack_vpc.demo.id}"
+    project = "${var.project}"
+}
+
+# Acquire IP for load balancing web app
+resource "cloudstack_ipaddress" "ssh-ip" {
     vpc = "${cloudstack_vpc.demo.id}"
     project = "${var.project}"
 }
@@ -80,12 +97,26 @@ resource "cloudstack_loadbalancer_rule" "default" {
   ipaddress = "${cloudstack_ipaddress.lb-ip.id}"
   algorithm = "roundrobin"
   network = "${cloudstack_network.web.id}"
-  private_port = 80
-  public_port = 80
+  private_port = 5000
+  public_port = 5000
   members = ["${cloudstack_instance.app.*.id}"]
   depends_on = ["cloudstack_instance.app"]
 }
 
-output "proxy-ip" {
+resource "cloudstack_port_forward" "ssh-pf" {
+  ipaddress = "${cloudstack_ipaddress.ssh-ip.id}"
+  forward {
+    protocol = "tcp"
+    private_port = 22
+    public_port = 22
+    virtual_machine = "${cloudstack_instance.app.0.id}"
+  }
+}
+
+output "lb-ip" {
     value = "${cloudstack_ipaddress.lb-ip.ipaddress}"
+}
+
+output "ssh-ip" {
+    value = "${cloudstack_ipaddress.ssh-ip.ipaddress}"
 }

@@ -4,19 +4,27 @@ variable "api_url" {
 }
 variable "api_key" {}
 variable "secret_key" {}
-variable "project" {
-    default = "1e749146-d81b-49e5-8df5-3052868a738c" 
-}
+variable "project" {}
+
+# Remote state
 variable "backend_container" {
    default="private"
 }
 
 #Resource variables
+variable "db_instance_count" {
+   default = 2
+}
+variable "app_instance_count" {
+   default = 3
+}
+
+#Resource defaults
 variable "zone" {
     default = "QC-1"
 }
 variable "template" {
-   default = "Ubuntu 14.04.2 HVM base (64bit)"
+   default = "Ubuntu 14.04.4 HVM base (64bit)"
 }
 variable "allow_all_acl" {
    default = "9ba3ec65-2e1d-11e4-8e05-42a29a39fc92"

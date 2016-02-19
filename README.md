@@ -15,11 +15,12 @@ This deployment example will deploy :
 2. Retrive your API keys for your cloud.ca compute and object-storage environments, and export them to environment variables
 
     ```
-    export TF_VAR_api_key=YOUR CS API KEY
-    export TF_VAR_secret_key=YOUR CS SECRET KEY
-    export OS_USERNAME=YOUR SWIFT USERNAME
-    export OS_PASSWORD=YOUR SWIFT PASSWORD
-    export OS_TENANT_NAME=YOUR SWIFT TENANT NAME
+    export TF_VAR_api_key=YOUR_CS_API_KEY
+    export TF_VAR_secret_key=YOUR_CS_SECRET_KEY
+    export TF_VAR_project=YOUR_ENVIRONMENT_PROJECT_ID
+    export OS_USERNAME=YOUR_SWIFT_USERNAME
+    export OS_PASSWORD=YOUR_SWIFT_PASSWORD
+    export OS_TENANT_NAME=YOUR_SWIFT_TENANT_NAME
     export OS_AUTH_URL=https://auth-east.cloud.ca/v2.0
    ```
 
@@ -28,6 +29,7 @@ This deployment example will deploy :
     ```
     terraform remote config -backend=swift -backend-config="path=private"
     ```
+
     By default, __backend_container__ variable is set to private. If you would like to use a different container, be sure to change it in the __variables.tf__ file and modify the command above.
 
 4. Retrieve plan to deploy infrastructure
@@ -36,7 +38,7 @@ This deployment example will deploy :
     terraform plan
     ```
 
-5. Deploy the infrastructure
+5. Deploy your infrastructure
 
     ```
     terraform apply
