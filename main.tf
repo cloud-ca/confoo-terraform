@@ -13,17 +13,16 @@ resource "terraform_remote_state" "tf_state" {
 # VPC for demo
 resource "cloudstack_vpc" "demo" {
     name = "demo"
-    cidr = "10.160.0.0/22"
+    cidr = "${var.vpc_cidr}"
     vpc_offering = "Default VPC offering"
     zone = "${var.zone}"
     project = "${var.project}"
-
 }
 
 # Tier for web application
 resource "cloudstack_network" "web" {
     name = "web"
-    cidr = "10.160.1.0/24"
+    cidr = "${cidrsubnet("${var.vpc_cidr}", 2, 1)}"
     network_offering = "Load Balanced Tier"
     vpc = "${cloudstack_vpc.demo.id}"
     zone = "${var.zone}"
@@ -35,7 +34,7 @@ resource "cloudstack_network" "web" {
 # Tier for dbs
 resource "cloudstack_network" "data" {
     name = "data"
-    cidr = "10.160.2.0/24"
+    cidr = "${cidrsubnet("${var.vpc_cidr}", 2, 2)}"
     network_offering = "Standard Tier"
     vpc = "${cloudstack_vpc.demo.id}"
     zone = "${var.zone}"
@@ -51,7 +50,7 @@ resource "cloudstack_instance" "db" {
     network = "${cloudstack_network.data.id}"
     template = "${var.template}"
     zone = "${var.zone}"
-    keypair = "pdube"
+    keypair = "${var.ssh_key}"
     project = "${var.project}"
     count = "${var.db_instance_count}"
 }
@@ -72,7 +71,7 @@ resource "cloudstack_instance" "app" {
     template = "${var.template}"
     zone = "${var.zone}"
     project = "${var.project}"
-    keypair = "pdube"
+    keypair = "${var.ssh_key}"
     count = "${var.app_instance_count}"
     user_data = "${element(template_file.app_init.*.rendered, count.index)}"
     depends_on = ["cloudstack_instance.db"]
