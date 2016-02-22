@@ -1,29 +1,17 @@
-# Environment setup variables
+#Required variables
 variable "api_url" {
     default = "https://compute-east.cloud.ca/client/api"
 }
 variable "api_key" {}
 variable "secret_key" {}
 variable "project" {}
+variable "backend_container" {}
 
-# Remote state
-variable "backend_container" {
-   default="private"
-}
-
-#Resource variables
-variable "vpc_cidr" { 
-   default = "10.160.0.0/22"
-}
-variable "db_instance_count" {
-   default = 2
-}
-variable "app_instance_count" {
-   default = 3
-}
-variable "ssh_key" {
-   default = "pdube"
-}
+#Required resource variables
+variable "vpc_cidr" {}
+variable "app_instance_count" {}
+variable "db_instance_count" {}
+variable "ssh_key" {}
 
 #Resource defaults
 variable "service_offering" {
@@ -35,7 +23,14 @@ variable "template" {
 variable "zone" {
     default = "QC-1"
 }
-
 variable "allow_all_acl" {
    default = "9ba3ec65-2e1d-11e4-8e05-42a29a39fc92"
+}
+
+#LB defaults
+variable "lb_port" {
+   default = 5000
+}
+variable "lb_algorithm"{
+   default = "roundrobin"
 }

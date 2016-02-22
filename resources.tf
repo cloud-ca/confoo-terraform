@@ -1,7 +1,3 @@
-# Working demo file to deploy a VPC,
-# 2 tiers, 3 application instances,
-# 2 db instances and load balance the 3 application instances
-
 #Store remote state in swift
 resource "terraform_remote_state" "tf_state" {
     backend = "swift"
@@ -28,7 +24,6 @@ resource "cloudstack_network" "web" {
     zone = "${var.zone}"
     aclid = "${var.allow_all_acl}"
     project = "${var.project}"
-    depends_on = ["cloudstack_vpc.demo"]
 }
 
 # Tier for dbs
@@ -40,7 +35,6 @@ resource "cloudstack_network" "data" {
     zone = "${var.zone}"
     aclid = "${var.allow_all_acl}"
     project = "${var.project}"
-    depends_on = ["cloudstack_vpc.demo"]
 }
 
 # Db
@@ -53,14 +47,6 @@ resource "cloudstack_instance" "db" {
     keypair = "${var.ssh_key}"
     project = "${var.project}"
     count = "${var.db_instance_count}"
-}
-
-resource "template_file" "app_init" {
-  count    = "${var.app_instance_count}"
-  template = "${file("app.init")}"
-  vars {
-    instance_name = "app${count.index}"
-  }
 }
 
 # Applications
@@ -77,14 +63,23 @@ resource "cloudstack_instance" "app" {
     depends_on = ["cloudstack_instance.db"]
 }
 
+resource "template_file" "app_init" {
+  count    = "${var.app_instance_count}"
+  template = "${file("app.init")}"
+  vars {
+    instance_name = "app${count.index}"
+    app_port = "${var.lb_port}"
+  }
+}
+
 # Acquire IP for load balancing web app
-resource "cloudstack_ipaddress" "lb-ip" {
+resource "cloudstack_ipaddress" "lb_ip" {
     vpc = "${cloudstack_vpc.demo.id}"
     project = "${var.project}"
 }
 
 # Acquire IP for load balancing web app
-resource "cloudstack_ipaddress" "ssh-ip" {
+resource "cloudstack_ipaddress" "ssh_ip" {
     vpc = "${cloudstack_vpc.demo.id}"
     project = "${var.project}"
 }
@@ -93,17 +88,17 @@ resource "cloudstack_ipaddress" "ssh-ip" {
 resource "cloudstack_loadbalancer_rule" "default" {
   name = "app-lb"
   description = "App load balancer rule"
-  ipaddress = "${cloudstack_ipaddress.lb-ip.id}"
-  algorithm = "roundrobin"
+  ipaddress = "${cloudstack_ipaddress.lb_ip.id}"
+  algorithm = "${var.lb_algorithm}"
   network = "${cloudstack_network.web.id}"
-  private_port = 5000
-  public_port = 5000
+  private_port = "${var.lb_port}"
+  public_port = "${var.lb_port}"
   members = ["${cloudstack_instance.app.*.id}"]
   depends_on = ["cloudstack_instance.app"]
 }
 
-resource "cloudstack_port_forward" "ssh-pf" {
-  ipaddress = "${cloudstack_ipaddress.ssh-ip.id}"
+resource "cloudstack_port_forward" "ssh_pf" {
+  ipaddress = "${cloudstack_ipaddress.ssh_ip.id}"
   forward {
     protocol = "tcp"
     private_port = 22
@@ -112,10 +107,10 @@ resource "cloudstack_port_forward" "ssh-pf" {
   }
 }
 
-output "lb-ip" {
-    value = "${cloudstack_ipaddress.lb-ip.ipaddress}"
+output "lb_ip" {
+    value = "${cloudstack_ipaddress.lb_ip.ipaddress}"
 }
 
-output "ssh-ip" {
-    value = "${cloudstack_ipaddress.ssh-ip.ipaddress}"
+output "ssh_ip" {
+    value = "${cloudstack_ipaddress.ssh_ip.ipaddress}"
 }

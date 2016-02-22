@@ -1,5 +1,5 @@
 #cloud-config
 runcmd:
- - echo "<html>Hello world. I am ${instance_name}</html>" > /home/cca-user/index.html
  - cd /home/cca-user
- - python -m SimpleHTTPServer 5000
+ - echo "<html>Hello world. I am ${instance_name}</html>" > index.html
+ - python -m SimpleHTTPServer ${app_port}
