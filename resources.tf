@@ -78,12 +78,6 @@ resource "cloudstack_ipaddress" "lb_ip" {
     project = "${var.project}"
 }
 
-# Acquire IP for load balancing web app
-resource "cloudstack_ipaddress" "ssh_ip" {
-    vpc = "${cloudstack_vpc.demo.id}"
-    project = "${var.project}"
-}
-
 # Load balancer rule for web application
 resource "cloudstack_loadbalancer_rule" "default" {
   name = "app-lb"
@@ -97,6 +91,16 @@ resource "cloudstack_loadbalancer_rule" "default" {
   depends_on = ["cloudstack_instance.app"]
 }
 
+output "lb_ip" {
+    value = "${cloudstack_ipaddress.lb_ip.ipaddress}"
+}
+
+# Acquire IP for ssh
+resource "cloudstack_ipaddress" "ssh_ip" {
+    vpc = "${cloudstack_vpc.demo.id}"
+    project = "${var.project}"
+}
+
 resource "cloudstack_port_forward" "ssh_pf" {
   ipaddress = "${cloudstack_ipaddress.ssh_ip.id}"
   forward {
@@ -105,10 +109,6 @@ resource "cloudstack_port_forward" "ssh_pf" {
     public_port = 22
     virtual_machine = "${cloudstack_instance.app.0.id}"
   }
-}
-
-output "lb_ip" {
-    value = "${cloudstack_ipaddress.lb_ip.ipaddress}"
 }
 
 output "ssh_ip" {
