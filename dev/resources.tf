@@ -24,7 +24,9 @@ resource "cloudstack_network" "web" {
     zone = "${var.zone}"
     aclid = "${var.allow_all_acl}"
     project = "${var.project}"
+    depends_on = ["cloudstack_vpc.demo"]
 }
+
 
 # Tier for dbs
 resource "cloudstack_network" "data" {
@@ -35,6 +37,7 @@ resource "cloudstack_network" "data" {
     zone = "${var.zone}"
     aclid = "${var.allow_all_acl}"
     project = "${var.project}"
+    depends_on = ["cloudstack_vpc.demo"]
 }
 
 # Db
@@ -79,7 +82,7 @@ resource "cloudstack_ipaddress" "lb_ip" {
 }
 
 # Load balancer rule for web application
-resource "cloudstack_loadbalancer_rule" "default" {
+resource "cloudstack_loadbalancer_rule" "app_lbr" {
   name = "app-lb"
   description = "App load balancer rule"
   ipaddress = "${cloudstack_ipaddress.lb_ip.id}"
