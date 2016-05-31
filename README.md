@@ -20,7 +20,7 @@ This deployment example will deploy :
     export OS_USERNAME=YOUR_SWIFT_USERNAME
     export OS_PASSWORD=YOUR_SWIFT_PASSWORD
     export OS_TENANT_NAME=YOUR_SWIFT_TENANT_NAME
-    export OS_AUTH_URL=https://auth-east.cloud.ca/v2.0
+    export OS_AUTH_URL=https://auth-qc.cloud.ca/v2.0
    ```
 
 3. Set terraform to use a container as remote backend. 
